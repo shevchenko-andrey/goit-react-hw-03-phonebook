@@ -11,6 +11,7 @@ import Section from './Section';
 import Contacts from './Contacts';
 import Filter from './Filter';
 
+const STORAGE_CONTACTS_KEY = 'contacts';
 class App extends Component {
   static defaultProps = {
     state: {
@@ -25,8 +26,19 @@ class App extends Component {
   };
 
   state = this.props.state;
-  static propTypes = {};
 
+  componentDidMount() {
+    const contacts = localStorage.getItem(STORAGE_CONTACTS_KEY);
+    if (contacts) {
+      this.setState({ contacts: JSON.parse(contacts) });
+    }
+  }
+  componentDidUpdate(prevState) {
+    const { contacts } = this.state;
+    if (contacts !== prevState.contacts) {
+      localStorage.setItem(STORAGE_CONTACTS_KEY, JSON.stringify(contacts));
+    }
+  }
   handleSubmitForm = ({ name, number }) => {
     const { contacts } = this.state;
     const isDubled = contacts.find(
